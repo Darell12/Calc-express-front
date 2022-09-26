@@ -2,23 +2,26 @@ import React from 'react'
 import '../App.css'
 
 
-const Calculadora = ({result, setResult, param, setParam}) => {
+const Calculadora = ({result, setResult, param, setParam, revisa, setRevisa}) => {
 
 
   const handleClick = (e) => {
   
     setResult(result.concat(e.target.name));
     setParam(param.concat(e.target.name));
+    
   }
 
   const handleClickdiv = (e) => {
-    setResult(result.concat(e.target.name));  
+    setResult(result.concat(e.target.name));
+       
     setParam(result.concat("%2F"));
   }
 
   const clear = () => {
     setResult("");
     setParam("");  
+    setRevisa("");
 }
 
   const backspace = () => {
@@ -28,11 +31,13 @@ const Calculadora = ({result, setResult, param, setParam}) => {
 
 
   const handleCalcular = async (e) => {
-    e.preventDefault();
+    setParam(result.replace("/", "%2F"));
     console.log(param);
     console.log("Calculo de la expresion: ", param);
+    
 
     try{
+      
       const res = await fetch(`http://localhost:4000/calcular/${param}`);
       const calc = await res.json();
 
@@ -42,14 +47,35 @@ const Calculadora = ({result, setResult, param, setParam}) => {
   } catch(error){
     console.log(error);
   }
-  };
+  }
+
+ 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('You clicked submit.');
+    handleCalcular();
+    
+  }
+
+  const revisar = (e) => {
+    
+    
+    setResult(e.target.value);
+    setParam(result.replace("/", "%2F"));
+    console.log("reviso")
+    console.log(param, result)
+  }
+
   return (
     <>
 
     <div className='contenedor'>
 
-    <form action=""></form>
-    <input type="text" value={result}/>
+    <form action="" onSubmit={handleSubmit} >
+      <input type="text" value={result} 
+    onChange={revisar} />
+    </form>
+    
   
 
     <div className="keypad">
